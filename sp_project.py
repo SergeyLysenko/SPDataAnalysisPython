@@ -102,4 +102,60 @@ for column in data.columns:
 #print(data["Air Date"].sample(20))
 
 
-data["Directed by"].value_counts()
+#data["Directed by"].value_counts()
+#print(data.columns)
+#data["Written by"].value_counts()
+data[[ "Directed by"]].describe()
+#data["Written by"].value_counts()
+data[[ "Viewers (millions)"]].describe()
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.scatter(data["Viewers (millions)"], data["# in season"])
+ax.set_title("Scatter Plot of Viewers")
+ax.set_xlabel("Average Viwers")
+ax.set_ylabel("# in season")
+fig.show()
+
+from sklearn.linear_model import LinearRegression
+x = data.loc[:, ["Viewers (millions)"]]
+y = data.loc[:, "# in season"]
+
+model = LinearRegression()
+model.fit(x, y)
+r_squared = f"R-Squared: {model.score(x, y):.2f}"
+best_fit = f"y = {model.coef_[0]:.4f}x{model.intercept_:+.4f}"
+y_pred = model.predict(x)
+
+fig, ax = plt.subplots()
+ax.scatter(x, y)
+ax.plot(x, y_pred, color="red")
+ax.text(7.25, 5.5, r_squared, fontsize=10)
+ax.text(7.25, 7, best_fit, fontsize=10)
+ax.set_title("Scatter Plot of Ratings")
+ax.set_xlabel("Average IMDb Rating")
+ax.set_ylabel("Average Rotten Tomatoes Rating")
+fig.show()
+
+# Calculate average viewers per season
+average_viewers_per_season = data.groupby('# in season')['Viewers (millions)'].mean()
+
+# Create the scatter plot
+fig, ax = plt.subplots()
+ax.scatter(data["Viewers (millions)"], data["# in season"])
+
+# Plot the average viewers per season
+# Here, we use a different marker style for averages
+ax.scatter(average_viewers_per_season, average_viewers_per_season.index, color='red', marker='x', label='Average per Season')
+
+# Adding labels and title
+ax.set_title("Scatter Plot of Viewers")
+ax.set_xlabel("Viewers (millions)")
+ax.set_ylabel("# in Season")
+
+# Add a legend
+ax.legend()
+
+# Show the plot
+plt.show()
